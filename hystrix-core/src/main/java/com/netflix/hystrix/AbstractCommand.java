@@ -133,6 +133,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
     // this is a micro-optimization but saves about 1-2microseconds (on 2011 MacBook Pro) 
     // on the repetitive string processing that will occur on the same classes over and over again
+    //这是微优化，但可节省大约1-2微秒（在2011 MacBook Pro上）
+    // 在相同类上反复出现的重复字符串处理
+    /*
+    *
+    * 下面使用了类名作为 Command 的建值
+    * 比起直接使用 getSimpleName 获取类名这里使用了
+    * Map的方式存储 SimpleName
+    * 微优化
+    *   这里用的是ConcurrentHashMap
+    *   @ThreadSafe
+    * by sdttttt
+    * */
     private static ConcurrentHashMap<Class<?>, String> defaultNameCache = new ConcurrentHashMap<Class<?>, String>();
 
     protected static ConcurrentHashMap<HystrixCommandKey, Boolean> commandContainsFallback = new ConcurrentHashMap<HystrixCommandKey, Boolean>();
@@ -144,8 +156,9 @@ import java.util.concurrent.atomic.AtomicReference;
         }
         // generate the default
         // default HystrixCommandKey to use if the method is not overridden
+        //如果未重写该方法，则使用默认的HystrixCommandKey
         String name = cls.getSimpleName();
-        if (name.equals("")) {
+        if ("".equals(name)) {
             // we don't have a SimpleName (anonymous inner class) so use the full class name
             name = cls.getName();
             name = name.substring(name.lastIndexOf('.') + 1, name.length());
@@ -158,13 +171,16 @@ import java.util.concurrent.atomic.AtomicReference;
             HystrixCommandProperties.Setter commandPropertiesDefaults, HystrixThreadPoolProperties.Setter threadPoolPropertiesDefaults,
             HystrixCommandMetrics metrics, TryableSemaphore fallbackSemaphore, TryableSemaphore executionSemaphore,
             HystrixPropertiesStrategy propertiesStrategy, HystrixCommandExecutionHook executionHook) {
-
+        //commandGroup对象，用于组织一类业务相关的对象
         this.commandGroup = initGroupKey(group);
+        // commandKey默认是以类为为名称的
         this.commandKey = initCommandKey(key, getClass());
         this.properties = initCommandProperties(this.commandKey, propertiesStrategy, commandPropertiesDefaults);
+        //这个方法里定义了TheradPool里的关键字，默认以传入的commandGroup 的name做为key的名称
         this.threadPoolKey = initThreadPoolKey(threadPoolKey, this.commandGroup, this.properties.executionIsolationThreadPoolKeyOverride().get());
         this.metrics = initMetrics(metrics, this.commandGroup, this.threadPoolKey, this.commandKey, this.properties);
         this.circuitBreaker = initCircuitBreaker(this.properties.circuitBreakerEnabled().get(), circuitBreaker, this.commandGroup, this.commandKey, this.properties, this.metrics);
+        //这里就是线程池对象
         this.threadPool = initThreadPool(threadPool, this.threadPoolKey, threadPoolPropertiesDefaults);
 
         //Strategies from plugins
@@ -193,7 +209,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
     private static HystrixCommandKey initCommandKey(final HystrixCommandKey fromConstructor, Class<?> clazz) {
         if (fromConstructor == null || fromConstructor.name().trim().equals("")) {
+            //
             final String keyName = getDefaultNameFromClass(clazz);
+            // HystrixCommandKey.Factory.asKey
+            // 每个 HystrixCommandKey 都对应了一个 HystrixCommand
+            // 这个asKey会把 keyName 存入HystrixCommandKey 的 一个 共享却不可见的 Map 中
+            // HystrixCommandKey.Factory.asKey 是唯一一个对外暴露这个Map的控制方法
             return HystrixCommandKey.Factory.asKey(keyName);
         } else {
             return fromConstructor;
@@ -217,12 +238,18 @@ import java.util.concurrent.atomic.AtomicReference;
      * It uses the HystrixThreadPoolKey if provided, then defaults to use HystrixCommandGroup.
      *
      * It can then be overridden by a property if defined so it can be changed at runtime.
+     *
+     *
+     *       这个方法用于得到HystrixThreadPoolKey 对象，
+     *         Hystrix内部有大量的Key对象，可以简单理解这些  Key都是相应对象的唯一标识。
+     *         从代码里可以看出，默认情况下Hystrix采用的是commandGroup 的name做为Thread Pool的key值。
      */
     private static HystrixThreadPoolKey initThreadPoolKey(HystrixThreadPoolKey threadPoolKey, HystrixCommandGroupKey groupKey, String threadPoolKeyOverride) {
         if (threadPoolKeyOverride == null) {
             // we don't have a property overriding the value so use either HystrixThreadPoolKey or HystrixCommandGroup
             if (threadPoolKey == null) {
                 /* use HystrixCommandGroup if HystrixThreadPoolKey is null */
+                /* HystrixThreadPoolKey 和 HystrixCommandKey 差不多 */
                 return HystrixThreadPoolKey.Factory.asKey(groupKey.name());
             } else {
                 return threadPoolKey;
@@ -271,9 +298,14 @@ import java.util.concurrent.atomic.AtomicReference;
         }
     }
 
+    /*
+            在这里将调用具体的构造线程池的方法。
+    *   初始化线程池
+    * */
     private static HystrixThreadPool initThreadPool(HystrixThreadPool fromConstructor, HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter threadPoolPropertiesDefaults) {
         if (fromConstructor == null) {
             // get the default implementation of HystrixThreadPool
+            // 获得 HystrixThreadPool 的默认实现
             return HystrixThreadPool.Factory.getInstance(threadPoolKey, threadPoolPropertiesDefaults);
         } else {
             return fromConstructor;

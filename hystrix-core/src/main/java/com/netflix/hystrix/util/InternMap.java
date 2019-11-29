@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Utility to have 'intern' - like functionality, which holds single instance of wrapper for a given key
+ * 具有“实习生”之类的实用程序的功能，该功能保存给定键的单个包装器实例
  */
 public class InternMap<K, V> {
     private final ConcurrentMap<K, V> storage = new ConcurrentHashMap<K, V>();
@@ -23,6 +24,7 @@ public class InternMap<K, V> {
         V newKey = null;
         if (existingKey == null) {
             newKey = valueConstructor.create(key);
+            // 如果不存在这个 key 就帮他放进去
             existingKey = storage.putIfAbsent(key, newKey);
         }
         return existingKey != null ? existingKey : newKey;

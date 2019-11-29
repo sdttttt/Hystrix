@@ -38,11 +38,16 @@ import rx.functions.Func0;
  * Used to wrap code that will execute potentially risky functionality (typically meaning a service call over the network)
  * with fault and latency tolerance, statistics and performance metrics capture, circuit breaker and bulkhead functionality.
  * This command is essentially a blocking command but provides an Observable facade if used with observe()
- * 
+ *
+ * 用于包装将执行潜在风险功能（通常意味着通过网络进行服务调用）*的代码，
+ * 并具有容错和等待时间容限，统计数据和性能指标捕获，断路器和隔板功能。
+ * 该命令本质上是一个阻塞命令，但如果与 {@link HystrixCommand#observe() }一起使用，则可提供可观察的外观
+ *
  * @param <R>
  *            the return type
  * 
  * @ThreadSafe
+ * 它是线程安全的
  */
 public abstract class HystrixCommand<R> extends AbstractCommand<R> implements HystrixExecutable<R>, HystrixInvokableInfo<R>, HystrixObservable<R> {
 
@@ -150,6 +155,7 @@ public abstract class HystrixCommand<R> extends AbstractCommand<R> implements Hy
 
     /**
      * Fluent interface for arguments to the {@link HystrixCommand} constructor.
+     * 流利的接口，用于{@link HystrixCommand}构造函数的参数。
      * <p>
      * The required arguments are set via the 'with' factory method and optional arguments via the 'and' chained methods.
      * <p>

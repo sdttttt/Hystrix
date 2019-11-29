@@ -26,7 +26,11 @@ import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
  * Used to wrap code that will execute potentially risky functionality (typically meaning a service call over the network)
  * with fault and latency tolerance, statistics and performance metrics capture, circuit breaker and bulkhead functionality.
  * This command should be used for a purely non-blocking call pattern. The caller of this command will be subscribed to the Observable<R> returned by the run() method.
- * 
+ * 用于包装将执行潜在风险功能（通常表示通过网络进行服务调用）的代码
+ * 具有容错和延迟容限，
+ * 统计信息和性能指标捕获，断路器和隔板功能。
+ * 此命令应用于纯粹的非阻塞调用模式。
+ * 该命令的调用方将订阅run()方法返回的Observable <R>。
  * @param <R>
  *            the return type
  * 

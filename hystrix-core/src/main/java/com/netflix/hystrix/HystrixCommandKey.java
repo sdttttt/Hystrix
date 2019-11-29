@@ -21,6 +21,11 @@ import com.netflix.hystrix.util.InternMap;
  * A key to represent a {@link HystrixCommand} for monitoring, circuit-breakers, metrics publishing, caching and other such uses.
  * <p>
  * This interface is intended to work natively with Enums so that implementing code can be an enum that implements this interface.
+ *
+ * 表示{@link HystrixCommand}的键，用于监视，断路器，度量发布，缓存和其他此类用途。
+ * <p>
+ * 此接口旨在与Enums一起使用，以便实现代码可以是实现此接口的枚举。
+ *
  */
 public interface HystrixCommandKey extends HystrixKey {
     class Factory {
@@ -28,6 +33,7 @@ public interface HystrixCommandKey extends HystrixKey {
         }
 
         // used to intern instances so we don't keep re-creating them millions of times for the same key
+        // 这个 InternMap 是 Hystrix 自定义的这个Map 不会存贮重复的属性
         private static final InternMap<String, HystrixCommandKeyDefault> intern
                 = new InternMap<String, HystrixCommandKeyDefault>(
                 new InternMap.ValueConstructor<String, HystrixCommandKeyDefault>() {
@@ -40,7 +46,9 @@ public interface HystrixCommandKey extends HystrixKey {
 
         /**
          * Retrieve (or create) an interned HystrixCommandKey instance for a given name.
-         * 
+         *
+         * 为给定名称检索（或创建）一个嵌入式HystrixCommandKey实例。
+         *
          * @param name command name
          * @return HystrixCommandKey instance that is interned (cached) so a given name will always retrieve the same instance.
          */
