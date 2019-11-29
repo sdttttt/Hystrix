@@ -29,27 +29,37 @@ import com.netflix.hystrix.util.HystrixRollingNumber;
 
 /**
  * Properties for instances of {@link HystrixThreadPool}.
+ * HystrixThreadPool 的属性实例
  * <p>
  * Default implementation of methods uses Archaius (https://github.com/Netflix/archaius)
+ * 默认实现 👆
  *
  * Note a change in behavior in 1.5.7.  Prior to that version, the configuration for 'coreSize' was used to control
  * both coreSize and maximumSize.  This is a fixed-size threadpool that can never give up an unused thread.  In 1.5.7+,
  * the values can diverge, and if you set coreSize < maximumSize, threads can be given up (subject to the keep-alive
  * time)
+ *注意1.5.7中行为的变化。在该版本之前，'coreSize'的配置用于控制* coreSize和maximumSize。
+ * 这是一个固定大小的线程池，永远不会放弃未使用的线程。在1.5.7+版本中，*值可以不同，
+ * 如果您设置coreSize <maximumSize，则可以放弃线程（取决于keep-alive *时间）
+ *
  *
  * It is OK to leave maximumSize unset using any version of Hystrix.  If you do, then maximum size will default to
  * core size and you'll have a fixed-size threadpool.
+ * 可以使用任何版本的Hystrix保持maximumSize不变。
+ * 如果这样做，则最大大小将默认为*核心大小，并且您将拥有固定大小的线程池。
  *
  * If you accidentally set maximumSize < coreSize, then maximum will be raised to coreSize
  * (this prioritizes keeping extra threads around rather than inducing threadpool rejections)
+ * 如果您不小心将maximumSize <coreSize设置为，则maxmax将被提高为coreSize
+ * （这优先考虑保留额外的线程，而不是导致线程池拒绝）
  */
 public abstract class HystrixThreadPoolProperties {
 
     /* defaults */
-    static int default_coreSize = 10;            // core size of thread pool
-    static int default_maximumSize = 10;         // maximum size of thread pool
-    static int default_keepAliveTimeMinutes = 1; // minutes to keep a thread alive
-    static int default_maxQueueSize = -1;        // size of queue (this can't be dynamically changed so we use 'queueSizeRejectionThreshold' to artificially limit and reject)
+    static int default_coreSize = 10;            // core size of thread pool 核心数
+    static int default_maximumSize = 10;         // maximum size of thread pool 线程数
+    static int default_keepAliveTimeMinutes = 1; // minutes to keep a thread alive 几分钟保持线程存活
+    static int default_maxQueueSize = -1;        // 列队大小 size of queue (this can't be dynamically changed so we use 'queueSizeRejectionThreshold' to artificially limit and reject)
                                                  // -1 turns it off and makes us use SynchronousQueue
     static boolean default_allow_maximum_size_to_diverge_from_core_size = false; //should the maximumSize config value get read and used in configuring the threadPool
                                                                                  //turning this on should be a conscious decision by the user, so we default it to false
@@ -233,7 +243,9 @@ public abstract class HystrixThreadPoolProperties {
      *           .withCoreSize(10)
      *           .withQueueSizeRejectionThreshold(10);
      * } </pre>
-     * 
+     *
+     *  这个破玩意的 Setter 器
+     *
      * @NotThreadSafe
      */
     public static class Setter {

@@ -99,8 +99,10 @@ public class HystrixPropertiesFactory {
      */
     public static HystrixThreadPoolProperties getThreadPoolProperties(HystrixThreadPoolKey key, HystrixThreadPoolProperties.Setter builder) {
         HystrixPropertiesStrategy hystrixPropertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
+        // 这个其实就是获取了key的name 吧，除非上面的HystrixPropertiesStrategy被重写过
         String cacheKey = hystrixPropertiesStrategy.getThreadPoolPropertiesCacheKey(key, builder);
         if (cacheKey != null) {
+            //获取相应线程池的属性实例
             HystrixThreadPoolProperties properties = threadPoolProperties.get(cacheKey);
             if (properties != null) {
                 return properties;
@@ -110,8 +112,11 @@ public class HystrixPropertiesFactory {
                 }
                 // create new instance
                 properties = hystrixPropertiesStrategy.getThreadPoolProperties(key, builder);
-                // cache and return
+                // 缓存刚才创建的属性实例
+                // 如果没有键值这里会返回空
                 HystrixThreadPoolProperties existing = threadPoolProperties.putIfAbsent(cacheKey, properties);
+
+                //这个if 其实 返回哪个都是一样的
                 if (existing == null) {
                     return properties;
                 } else {
@@ -120,6 +125,7 @@ public class HystrixPropertiesFactory {
             }
         } else {
             // no cacheKey so we generate it with caching
+            // 没有缓存的建值就生产并且缓存它
             return hystrixPropertiesStrategy.getThreadPoolProperties(key, builder);
         }
     }

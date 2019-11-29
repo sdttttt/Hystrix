@@ -38,13 +38,22 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategyDefault;
 
 /**
  * Registry for plugin implementations that allows global override and handles the retrieval of correct implementation based on order of precedence:
+ * 插件实现的注册表，允许全局重写并根据优先级顺序处理对正确实现的检索：
  * <ol>
  * <li>plugin registered globally via <code>register</code> methods in this class</li>
  * <li>plugin registered and retrieved using the resolved {@link HystrixDynamicProperties} (usually Archaius, see get methods for property names)</li>
  * <li>plugin registered and retrieved using the JDK {@link ServiceLoader}</li>
  * <li>default implementation</li>
  * </ol>
- * 
+ * 通过该类中的<code> register </ code>方法全局注册的
+ * <ol> *
+ * <li>插件</ li>
+ * *使用已解析的{@link HystrixDynamicProperties}注册和检索的
+ * <li>插件（通常为Archaius，请参见get方法） </ li> *
+ * <li>使用JDK {@link ServiceLoader}注册和检索的插件</ li> *
+ * <li>默认实现</ li> *
+ * </ ol>
+ *
  * The exception to the above order is the {@link HystrixDynamicProperties} implementation 
  * which is only loaded through <code>System.properties</code> or the ServiceLoader (see the {@link HystrixPlugins#getDynamicProperties() getter} for more details).
  * <p>
@@ -53,6 +62,7 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategyDefault;
 public class HystrixPlugins {
     
     //We should not load unless we are requested to. This avoids accidental initialization. @agentgt
+    //除非请求，否则我们不应该加载。这样可以避免意外初始化。
     //See https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom
     private static class LazyHolder { private static final HystrixPlugins INSTANCE = HystrixPlugins.create(); }
     private final ClassLoader classLoader;

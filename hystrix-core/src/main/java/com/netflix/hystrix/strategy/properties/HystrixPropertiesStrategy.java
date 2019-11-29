@@ -30,6 +30,7 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 /**
  * Abstract class with default implementations of factory methods for properties used by various components of Hystrix.
  * <p>
+ *     Hystrix的各种组件使用的具有工厂方法默认实现的抽象类。
  * See {@link HystrixPlugins} or the Hystrix GitHub Wiki for information on configuring plugins: <a
  * href="https://github.com/Netflix/Hystrix/wiki/Plugins">https://github.com/Netflix/Hystrix/wiki/Plugins</a>.
  */
@@ -38,6 +39,7 @@ public abstract class HystrixPropertiesStrategy {
     /**
      * Construct an implementation of {@link HystrixCommandProperties} for {@link HystrixCommand} instances with {@link HystrixCommandKey}.
      * <p>
+     *     使用{@link HystrixCommandKey}为{@link HystrixCommand}实例构造{@link HystrixCommandProperties}的实现
      * <b>Default Implementation</b>
      * <p>
      * Constructs instance of {@link HystrixPropertiesCommandDefault}.
@@ -56,11 +58,14 @@ public abstract class HystrixPropertiesStrategy {
 
     /**
      * Cache key used for caching the retrieval of {@link HystrixCommandProperties} implementations.
+     * 缓存键，用于缓存{@link HystrixCommandProperties}实现的检索。
      * <p>
      * Typically this would return <code>HystrixCommandKey.name()</code> but can be done differently if required.
      * <p>
+     *     通常，这将返回<code> HystrixCommandKey.name（）</ code>，但如果需要，可以执行其他操作。
      * For example, null can be returned which would cause it to not cache and invoke {@link #getCommandProperties} for each {@link HystrixCommand} instantiation (not recommended).
      * <p>
+     *     例如，可以返回null，这将导致它不缓存并为每个{@link HystrixCommand}实例调用{@link #getCommandProperties}（不建议）。
      * <b>Default Implementation</b>
      * <p>
      * Returns {@link HystrixCommandKey#name()}
@@ -94,8 +99,9 @@ public abstract class HystrixPropertiesStrategy {
     }
 
     /**
-     * Cache key used for caching the retrieval of {@link HystrixThreadPoolProperties} implementations.
+     *  Cache key used for caching the retrieval of {@link HystrixThreadPoolProperties} implementations.
      * <p>
+     *     缓存键，用于缓存{@link HystrixThreadPoolProperties}实现的检索。 * <p>
      * Typically this would return <code>HystrixThreadPoolKey.name()</code> but can be done differently if required.
      * <p>
      * For example, null can be returned which would cause it to not cache and invoke {@link #getThreadPoolProperties} for each {@link HystrixThreadPool} instantiation (not recommended).

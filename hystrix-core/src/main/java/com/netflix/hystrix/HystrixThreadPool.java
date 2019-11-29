@@ -101,17 +101,23 @@ public interface HystrixThreadPool {
          */
         /* package */static HystrixThreadPool getInstance(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter propertiesBuilder) {
             // get the key to use instead of using the object itself so that if people forget to implement equals/hashcode things will still work
+            // 获取要使用的密钥，而不是使用对象本身，这样，如果人们忘记实现equals / hashcode，事情仍然可以进行
             String key = threadPoolKey.name();
 
             // this should find it for all but the first time
+            // 除了第一次这里每次都应该被找到
+            //这里从缓存取
             HystrixThreadPool previouslyCached = threadPools.get(key);
             if (previouslyCached != null) {
                 return previouslyCached;
             }
 
             // if we get here this is the first time so we need to initialize
+            // 如果我们是第一次来这里，他应该被初始化
+            // 这里需要保证线程安全，加上了相应的锁
             synchronized (HystrixThreadPool.class) {
                 if (!threadPools.containsKey(key)) {
+                    //具体的线程池是由HystrixThreadPoolDefault进行构造的
                     threadPools.put(key, new HystrixThreadPoolDefault(threadPoolKey, propertiesBuilder));
                 }
             }
@@ -168,7 +174,11 @@ public interface HystrixThreadPool {
         private final HystrixThreadPoolMetrics metrics;
         private final int queueSize;
 
+        // Hystrix 线程池的默认实现
+        // HystrixThreadPoolProperties 是HystrixThreadPool所有的属性设置，核心数线程池大小等等...
+        // Setter 只是上面这玩意的单纯的一个Set器
         public HystrixThreadPoolDefault(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties.Setter propertiesDefaults) {
+
             this.properties = HystrixPropertiesFactory.getThreadPoolProperties(threadPoolKey, propertiesDefaults);
             HystrixConcurrencyStrategy concurrencyStrategy = HystrixPlugins.getInstance().getConcurrencyStrategy();
             this.queueSize = properties.maxQueueSize().get();
