@@ -90,12 +90,17 @@ public interface HystrixThreadPool {
          * Use the String from HystrixThreadPoolKey.name() instead of the HystrixThreadPoolKey instance as it's just an interface and we can't ensure the object
          * we receive implements hashcode/equals correctly and do not want the default hashcode/equals which would create a new threadpool for every object we get even if the name is the same
          */
+        /*
+        * 这里使用了String 来对应一个 HystrixThreadPool 的实例
+        * */
         /* package */final static ConcurrentHashMap<String, HystrixThreadPool> threadPools = new ConcurrentHashMap<String, HystrixThreadPool>();
 
         /**
          * Get the {@link HystrixThreadPool} instance for a given {@link HystrixThreadPoolKey}.
+         * 获取指定 {@link HystrixThreadPoolKey } 的 {@link HystrixThreadPool} 的实例
          * <p>
          * This is thread-safe and ensures only 1 {@link HystrixThreadPool} per {@link HystrixThreadPoolKey}.
+         * 他是线程安全的，确保只有一个 {@link HystrixThreadPoolKey } 对应 {@link HystrixThreadPool} 的实例
          *
          * @return {@link HystrixThreadPool} instance
          */
@@ -115,12 +120,29 @@ public interface HystrixThreadPool {
             // if we get here this is the first time so we need to initialize
             // 如果我们是第一次来这里，他应该被初始化
             // 这里需要保证线程安全，加上了相应的锁
+            /*
+            * Suggest:
+            *   You can determine threadPools.containsKey again outside of the synchronized block
+            *   你可以在同步代码块的外部再次判断一次 threadPools.containsKey
+            *
+            * if (!threadPools.contains(key)) {
+                synchronized (HystrixThreadPool.class) {
+                    if(!threadPools.contains(key)) {
+                        threadPools.put(key , new HystrixThreadPoolDefault(threadPoolKey , propertiesBuilder));
+                    }
+                }
+              }
+            * by sdttttt
+            *
+            * */
+
             synchronized (HystrixThreadPool.class) {
                 if (!threadPools.containsKey(key)) {
                     //具体的线程池是由HystrixThreadPoolDefault进行构造的
                     threadPools.put(key, new HystrixThreadPoolDefault(threadPoolKey, propertiesBuilder));
                 }
             }
+            //直接获取
             return threadPools.get(key);
         }
 
