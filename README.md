@@ -8,7 +8,8 @@
 [![][license img]][license]
 
 # Hystrix SDTTTTT
-现在SDTTTTT正在尝试改变Hystrix，希望可以维护它。
+本来想维护这个东西的，但是Hystrix依赖的JDK和Gradle实在是有点古老，迁移到新的依赖是一件费事费力的事情。
+只能放弃了。
 
 # Hystrix Status
 Hystrix is no longer in active development, and is currently in maintenance mode.
