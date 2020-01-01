@@ -8,7 +8,7 @@
 [![][license img]][license]
 
 # Hystrix SDTTTTT
-现在SDTTTTT正在分析这个项目在源码，希望可以接手维护它。
+现在SDTTTTT正在尝试改变Hystrix，希望可以维护它。
 
 # Hystrix Status
 Hystrix is no longer in active development, and is currently in maintenance mode.
